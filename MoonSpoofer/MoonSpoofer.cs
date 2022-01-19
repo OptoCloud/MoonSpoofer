@@ -1,6 +1,8 @@
 ﻿using MelonLoader;
 using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace MoonSpoofer
 {
@@ -13,9 +15,8 @@ namespace MoonSpoofer
 			if (MoonSpoofCategory != null) return;
 
 			MoonSpoofCategory = MelonPreferences.CreateCategory("MoonSpoofer", "Moon Spoofer");
-			MoonSpoofEntryHWID = MoonSpoofCategory.CreateEntry<String>(identifier: "HWID", default_value: String.Empty, is_hidden: true);
+			MoonSpoofEntryHWID = MoonSpoofCategory.CreateEntry("HWID", String.Empty, is_hidden: true);
 		}
-
 
 		public static String OriginalHWID { get; } = UnityEngine.SystemInfo.deviceUniqueIdentifier;
 		public static String SpoofedHWID
@@ -40,11 +41,21 @@ namespace MoonSpoofer
 
 		public unsafe override void OnApplicationStart()
 		{
-			try
-			{
+            try
+            {
+                DialogResult dialogResult = MessageBox.Show("Click yes if you want to clean everything and perform a clean boot\nGame will close if it fails at performing all required actions.", "Clean everything?", MessageBoxButtons.YesNoCancel);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    CacheTools.NukeVRChat();
+                    RegistryTools.NukeVRChat();
+                    VRCXTools.NukeVRCX();
+                }
+                else if (dialogResult != DialogResult.No)
+                {
+                    HardKillApplication();
+                }
 
-
-				if (!Patches.Init(HarmonyInstance, LoggerInstance))
+                if (!Patches.Init(HarmonyInstance, LoggerInstance))
 					HardKillApplication();
 
 				if (UnityEngine.SystemInfo.deviceUniqueIdentifier != MoonSpoofer.SpoofedHWID)
