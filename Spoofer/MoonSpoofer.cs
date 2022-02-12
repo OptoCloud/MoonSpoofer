@@ -39,21 +39,11 @@ namespace MoonSpoofer
 				MoonSpoofEntryHWID.Value = value;
 				MoonSpoofCategory.SaveToFile(false);
 
-                RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey("SOFTWARE");
+                RegistryKey moonSpooferKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\MelonLoader\\MoonSpoofer", true);
+                if (moonSpooferKey == null)
+                    moonSpooferKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\MelonLoader\\MoonSpoofer", true);
 
-                RegistryKey melonKey;
-                if (!softwareKey.GetSubKeyNames().Contains("MelonLoader"))
-                    melonKey = softwareKey.CreateSubKey("MelonLoader");
-                else
-                    melonKey = softwareKey.OpenSubKey("MelonLoader");
-
-                RegistryKey spooferKey;
-                if (melonKey.GetSubKeyNames().Contains("MoonSpoofer"))
-                    spooferKey = melonKey.CreateSubKey("MoonSpoofer");
-                else
-                    spooferKey = melonKey.OpenSubKey("MoonSpoofer");
-
-                spooferKey.SetValue("HWID", value, RegistryValueKind.String);
+                moonSpooferKey.SetValue("HWID", value, RegistryValueKind.String);
             }
 		}
 
