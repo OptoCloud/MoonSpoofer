@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -60,6 +61,12 @@ namespace MoonSpoofer
 		{
             try
             {
+                if (!File.Exists("MoonSpoofer/Nuker.exe"))
+                {
+                    Directory.CreateDirectory("MoonSpoofer");
+                    File.WriteAllBytes("MoonSpoofer/Nuker.exe", Resource.NukerAssembly);
+                }
+
                 DialogResult dialogResult = MessageBox.Show("Click yes if you want to clean everything and perform a clean boot\nGame will close if it fails at performing all required actions.", "Clean everything?", MessageBoxButtons.YesNoCancel);
                 if (dialogResult == DialogResult.Yes)
                 {

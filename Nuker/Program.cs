@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MoonNuker
 {
-	internal class Program
-	{
-		static int Main(string[] args)
+    internal class Program
+    {
+        static int Main(string[] args)
         {
             try
             {
@@ -24,5 +20,5 @@ namespace MoonNuker
 
             return 0;
         }
-	}
+    }
 }
