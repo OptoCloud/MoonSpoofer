@@ -33,6 +33,7 @@ namespace MoonSpoofer
         bool AddRecord(String userId, String ip, String hwid, String appName, String serverName)
         {
             info.Add(new IpInfo() { UserID = userId, IP = ip, HWID = hwid, VPN_AppName = appName, VPN_ServerName = serverName });
+            return true;
         }
 
         IpInfo GetByIP(String ip)

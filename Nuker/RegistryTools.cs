@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Win32;
 
-namespace MoonSpoofer
+namespace MoonNuker
 {
     internal static class RegistryTools
     {
@@ -17,7 +17,6 @@ namespace MoonSpoofer
             RegistryKey unityTechKey = softwareKey.OpenSubKey("Unity Technologies");
             foreach (String valueName in unityTechKey.GetValueNames().Where(name => name.Contains("VRC")))
                 unityTechKey.DeleteValue(valueName);
-
         }
         public static void NukeVRCX()
         {

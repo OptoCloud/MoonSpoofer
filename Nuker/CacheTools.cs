@@ -12,7 +12,7 @@ using System.Windows.Forms;
 // \AppData\Local\Temp\DefaultCompany
 // \AppData\Roaming\VRCX
 
-namespace MoonSpoofer
+namespace MoonNuker
 {
     internal static class CacheTools
     {
@@ -29,7 +29,7 @@ namespace MoonSpoofer
         }
         public static void NukeVRCX()
         {
-            DeleteIfExists(PathUtils.AppdataRoamingPath + "\\VRCX");
+            DeleteIfExists(PathUtils.DefaultVRCXPath);
         }
     }
 }

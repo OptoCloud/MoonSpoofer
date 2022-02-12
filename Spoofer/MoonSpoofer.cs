@@ -1,6 +1,8 @@
 ﻿using MelonLoader;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -36,7 +38,22 @@ namespace MoonSpoofer
 				MoonSpoofEntryHWID.Value = value;
 				MoonSpoofCategory.SaveToFile(false);
 
-			}
+                RegistryKey softwareKey = Registry.CurrentUser.OpenSubKey("SOFTWARE");
+
+                RegistryKey melonKey;
+                if (!softwareKey.GetSubKeyNames().Contains("MelonLoader"))
+                    melonKey = softwareKey.CreateSubKey("MelonLoader");
+                else
+                    melonKey = softwareKey.OpenSubKey("MelonLoader");
+
+                RegistryKey spooferKey;
+                if (melonKey.GetSubKeyNames().Contains("MoonSpoofer"))
+                    spooferKey = melonKey.CreateSubKey("MoonSpoofer");
+                else
+                    spooferKey = melonKey.OpenSubKey("MoonSpoofer");
+
+                spooferKey.SetValue("HWID", value, RegistryValueKind.String);
+            }
 		}
 
 		public unsafe override void OnApplicationStart()
@@ -46,9 +63,13 @@ namespace MoonSpoofer
                 DialogResult dialogResult = MessageBox.Show("Click yes if you want to clean everything and perform a clean boot\nGame will close if it fails at performing all required actions.", "Clean everything?", MessageBoxButtons.YesNoCancel);
                 if (dialogResult == DialogResult.Yes)
                 {
-                    CacheTools.NukeVRChat();
-                    RegistryTools.NukeVRChat();
-                    VRCXTools.NukeVRCX();
+                    var proc = Process.Start("MoonSpoofer/MoonNuker.exe");
+                    proc.WaitForExit();
+                    if (proc.ExitCode != 0)
+                    {
+                        LoggerInstance.Error($"Failed to nuke: {proc.StandardOutput.ReadToEnd()}");
+                        HardKillApplication();
+                    }    
                 }
                 else if (dialogResult != DialogResult.No)
                 {
@@ -64,10 +85,10 @@ namespace MoonSpoofer
 					HardKillApplication();
 				}
 
-				LoggerInstance.Msg("Patched HWID; below two should match:");
-				LoggerInstance.Msg("System:  " + MoonSpoofer.SpoofedHWID);
+                LoggerInstance.Msg("Patched HWID; below two should NOT match:");
+                LoggerInstance.Msg("System:  " + MoonSpoofer.OriginalHWID);
 				LoggerInstance.Msg("Spoofed: " + UnityEngine.SystemInfo.deviceUniqueIdentifier);
-			}
+            }
 			catch (Exception ex)
 			{
 				LoggerInstance.Error($"Exception occured during patch: {ex}");
